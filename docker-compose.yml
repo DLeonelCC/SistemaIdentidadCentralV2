@@ -1,0 +1,39 @@
+services:
+  frontend:
+    container_name: frontend_sistema_identidad_central
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    tty: true
+    ports:
+      - '3002:8080'
+    networks:
+      - app-network
+#Backend
+  backend:
+    container_name: backend_sistema_identidad_central
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    tty: true
+    ports:
+      - '4002:8000'
+    volumes:
+      - api-root_sistema_identidad_central:/var/www/html
+      - ./config/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+
+volumes:
+  api-root_sistema_identidad_central:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./backend/
+      o: bind
+
+networks:
+  app-network:
+    driver: bridge
